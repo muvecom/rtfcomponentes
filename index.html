@@ -248,16 +248,60 @@
                     throw new Error(`Erro HTTP: ${response.status}`);
                 }
                 
+                chatInput.value = '';
+                
                 const data = await response.json();
-                const resposta = data[0]?.output || "Não entendi a resposta";
+                const resposta = data[0]?.output || "Não entendi a pergunta, poderia repetir, por favor?";
                 addMessage(resposta, false);
                 
             } catch (error) {
                 console.error('Erro ao enviar mensagem:', error);
                 addMessage("Erro ao conectar com o servidor.", false);
             } finally {
-                // Limpa o campo APÓS o envio
-                chatInput.value = '';
+                showTypingIndicator(false);
+                sendButton.disabled = false;
+            }
+        }
+        
+        async function sendMessage() {
+            const message = chatInput.value.trim();
+            chatInput.value = '';
+
+            if (!message) return;
+        
+            sendButton.disabled = true;
+            addMessage(message, true);
+            showTypingIndicator(true);
+            
+            try {
+                const response = await fetch('https://api.muvecom.com.br/v1/rtfcomponentes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        session_id: sessionID, 
+                        message: message
+                    })
+                });
+        
+                // Verifica se a resposta é JSON ou texto puro
+                const responseText = await response.text();
+                let respostaIA;
+        
+                try {
+                    // Tenta parsear como JSON (caso a API retorne JSON)
+                    const jsonData = JSON.parse(responseText);
+                    respostaIA = jsonData[0]?.output || jsonData.message || jsonData.response || responseText;
+                } catch {
+                    // Se falhar, usa o texto puro diretamente
+                    respostaIA = responseText;
+                }
+        
+                addMessage(respostaIA, false);
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                addMessage(`❌ Erro na comunicação: ${error.message}`, false);
+            } finally {
                 showTypingIndicator(false);
                 sendButton.disabled = false;
             }
