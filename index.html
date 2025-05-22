@@ -249,8 +249,8 @@
                 const data = await response.json();
                 
                 // Adiciona resposta da IA ao chat
-                if (data.response) {
-                    addMessage(data.response, false);
+                if (data) {
+                    addMessage(data, false);
                 } else {
                     addMessage("Desculpe, não consegui obter uma resposta.", false);
                 }
