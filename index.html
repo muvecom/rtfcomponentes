@@ -196,6 +196,7 @@
             text-decoration: underline;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
     <div class="chat-container">
@@ -221,6 +222,7 @@
     </div>
 
     <script>
+        let isSending = false;
         // Gerar um sessionID único ao carregar a página
         const sessionID = generateSessionID();
         document.getElementById('session-id').textContent = sessionID;
@@ -317,8 +319,6 @@
                 chatInput.focus();  // Volta o foco para o input
             }
         }
-
-        let isSending = false;
         
         // Event listeners
         sendButton.addEventListener('click', sendMessage);
