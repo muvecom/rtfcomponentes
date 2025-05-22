@@ -272,7 +272,6 @@
             if (isSending) return;  // Impede envios simultâneos
             
             const message = chatInput.value.trim();
-            chatInput.value = '';
             if (!message) return;
         
             // Desabilita controles
@@ -310,6 +309,7 @@
                 addMessage(`❌ Erro: ${error.message}`, false);
             } finally {
                 // Reabilita controles
+                chatInput.value = '';
                 chatInput.disabled = false;
                 sendButton.disabled = false;
                 isSending = false;
