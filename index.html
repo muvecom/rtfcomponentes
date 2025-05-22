@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat com IA - RTF Componentes</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css">
     <style>
         :root {
             --primary-color: #2563eb;
@@ -164,6 +165,36 @@
                 padding: 0 18px;
             }
         }
+                .markdown-body {
+            background-color: transparent !important;
+            font-size: 14px;
+            padding: 0 !important;
+        }
+        
+        .markdown-body ul, 
+        .markdown-body ol {
+            padding-left: 20px;
+            margin: 8px 0;
+        }
+        
+        .markdown-body pre {
+            background-color: rgba(0,0,0,0.05);
+            padding: 12px;
+            border-radius: 6px;
+            overflow-x: auto;
+        }
+        
+        .markdown-body code {
+            background-color: rgba(0,0,0,0.05);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        
+        .message a {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -210,9 +241,24 @@
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message');
             messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
-            messageDiv.textContent = content;
+            
+            // Converter Markdown para HTML
+            const htmlContent = marked.parse(content || '');
+            
+            // Criar container Markdown
+            const markdownContainer = document.createElement('div');
+            markdownContainer.classList.add('markdown-body');
+            markdownContainer.innerHTML = htmlContent;
+            
+            messageDiv.appendChild(markdownContainer);
             chatMessages.insertBefore(messageDiv, typingIndicator);
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Tratar links para abrir em nova aba
+            markdownContainer.querySelectorAll('a').forEach(link => {
+                link.setAttribute('target', '_blank');
+                link.setAttribute('rel', 'noopener noreferrer');
+            });
         }
         
         // Função para mostrar/ocultar indicador de digitação
